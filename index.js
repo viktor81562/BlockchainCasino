@@ -4,6 +4,7 @@ const http = require("http");
 const socketIO = require("socket.io");
 const cronJobs = require("./tasks/cronJobs");
 require("dotenv").config();
+const { placeBet, getBalance } = require('./interaction/contractInteraction');
 
 const app = express();
 const server = http.createServer(app);
@@ -34,6 +35,29 @@ app.use("/items", itemRoutes);
 app.use("/marketplace", marketplaceRoutes);
 app.use("/admin", adminRoutes);
 app.use("/games", gamesRoutes);
+
+// New API routes for smart contract interaction
+app.post('/api/placeBet', async (req, res) => {
+  const { userAddress, betAmount, choice } = req.body;
+  try {
+    await placeBet(userAddress, betAmount, choice);
+    res.status(200).send('Bet placed successfully');
+  } catch (error) {
+    console.error('Error placing bet:', error);
+    res.status(500).send('Error placing bet');
+  }
+});
+
+app.get('/api/balance', async (req, res) => {
+  const { userAddress } = req.query;
+  try {
+    const balance = await getBalance(userAddress);
+    res.status(200).send({ balance });
+  } catch (error) {
+    console.error('Error getting balance:', error);
+    res.status(500).send('Error getting balance');
+  }
+});
 
 // Start the games
 coinFlip(io);
