@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "npm install && npm-run-all -p client init-server",
+    "dev": "npm install && npm-run-all -p client init-server",
     "client": "cd client && npm install && npm run dev",
     "init-server": "node index.js"
   },
